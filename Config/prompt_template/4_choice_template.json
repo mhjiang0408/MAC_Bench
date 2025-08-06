@@ -1,0 +1,4 @@
+{
+    "system_prompt": "# Requirement\n You are an excellent scientific image reader. You need to analyze the provided image and choose the most appropriate option based on your understanding. ONLY based on the image and the options provided above, predict the probability that you would choose each option and answer AS SIMPLE AS POSSIBLE. Make sure the probabilities add up to 1.\n # Response Format\n ```json\n { \"A\": probability of choosing the option A, \"B\": probability of choosing the option B, \"C\": probability of choosing the option C, \"D\": probability of choosing the option D }\n```",
+    "user_prompt": "I want to ask you the following question: {question} And you have the following options: {options}. You need to predict the probability that you would choose each option based on the image."
+}

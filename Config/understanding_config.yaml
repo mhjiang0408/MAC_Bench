@@ -1,0 +1,16 @@
+models:
+    - name: qwen2.5-vl-7b-instruct
+      api_base: https://dashscope.aliyuncs.com/compatible-mode/v1
+      api_key: sk-xxxx
+      prompt_template: Config/prompt_template/4_choice_template.json
+      resume: true
+      resume_path: ./experiment/results/understanding/qwen2.5-vl-7b-instruct_4options_20250321_123248/results.csv
+      num_workers: 4
+
+data:
+  data_path: MAC_Bench/image2text_info.csv
+  output_folder: ./experiment/results/understanding/
+  scaling_factor: 1
+  num_options: 4
+  type: image2text
+  random_seed: 42
