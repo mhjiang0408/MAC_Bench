@@ -2,7 +2,7 @@
 """
 MAC_Bench CLI - Main Entry Point
 
-Command-line interface for MAC_Bench multimodal AI evaluation framework.
+Command-line interface for MAC_Bench .
 """
 
 import click
@@ -38,9 +38,9 @@ pass_cli = click.make_pass_decorator(MacCLI, ensure=True)
 @click.pass_context
 def cli(ctx, verbose, version):
     """
-    MAC_Bench CLI - Multimodal AI Challenge Benchmark
+    MAC_Bench CLI 
     
-    A comprehensive evaluation framework for multimodal AI models
+    A comprehensive evaluation framework
     on scientific journal cover understanding tasks.
     
     \b

@@ -61,7 +61,7 @@ def run_command(config: Optional[Path],
     """
     Run MAC_Bench experiments
     
-    Execute multimodal AI evaluation experiments using specified
+    Execute MLLM evaluation experiments
     configurations and models.
     
     \b

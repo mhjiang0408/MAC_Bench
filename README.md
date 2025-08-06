@@ -263,7 +263,7 @@ If you use MAC_Bench in your research, please cite our paper:
 
 ```bibtex
 @article{mac_bench_2025,
-  title={MAC_Bench: A Multimodal AI Challenge Benchmark for Scientific Journal Cover Understanding},
+  title={MAC: A Live Benchmark for Multimodal Large Language Models in Scientific Understanding},
   author={},
   journal={arXiv preprint arXiv:2501.XXXXX},
   year={2025},
@@ -276,6 +276,3 @@ If you use MAC_Bench in your research, please cite our paper:
 - **Issues**: Report bugs via GitHub Issues
 - **Discussions**: Join community discussions for help
 
----
-
-**Ready to benchmark your multimodal AI models? Start with `./setup.sh` and run `mac run` - it's that simple! 🚀**
