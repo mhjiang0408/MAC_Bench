@@ -1,5 +1,6 @@
 *.png
 *.txt
+!requirements-cli.txt
 *.html
 *.log
 experiment/analysis/

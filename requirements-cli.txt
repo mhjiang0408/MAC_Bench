@@ -1,0 +1,20 @@
+# CLI-specific requirements for MAC_Bench
+# These are in addition to the base requirements in environment.yml
+
+# Core CLI framework
+click>=8.0.0
+colorama>=0.4.4
+
+# System monitoring and resource checking
+psutil>=5.8.0
+
+# Data analysis and visualization for results
+matplotlib>=3.5.0
+seaborn>=0.11.0
+
+# Progress bars and formatting
+tqdm>=4.60.0
+rich>=12.0.0
+
+# Additional utilities
+pathlib2>=2.3.6; python_version<"3.4"

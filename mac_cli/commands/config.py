@@ -171,11 +171,12 @@ def _generate_full_template() -> Dict[str, Any]:
                 'api_key': 'sk-your-qwen-key',
                 'prompt_template': 'Config/prompt_template/4_choice_template.json',
                 'resume': False,
+                'resume_path': None,
                 'num_workers': 2
             }
         ],
         'data': {
-            'data_path': './Data/Understanding/MAC_2025/image2text_given/full_dataset.csv',
+            'data_path': './MAC_Bench/image2text_info.csv',
             'output_folder': './experiment/results/understanding/',
             'scaling_factor': 1.0,
             'num_options': 4,
@@ -195,13 +196,13 @@ def _generate_example_template() -> Dict[str, Any]:
                 'api_base': 'https://api.stepfun.com/v1',
                 'api_key': 'your-stepfun-api-key',
                 'prompt_template': 'Config/prompt_template/4_choice_template.json',
-                'resume': True,
-                'resume_path': './experiment/results/understanding/step-1o-turbo-vision_4options_20250327_173422/results.csv',
+                'resume': False,
+                'resume_path': None,
                 'num_workers': 5
             }
         ],
         'data': {
-            'data_path': './Data/Understanding/MAC_2026/image2text_given/full_dataset.csv',
+            'data_path': './MAC_Bench/image2text_info.csv',
             'output_folder': './experiment/results/understanding/',
             'scaling_factor': 0.1,  # Use 10% of data for quick testing
             'num_options': 4,

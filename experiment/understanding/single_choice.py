@@ -15,7 +15,6 @@ import random
 import argparse
 import pandas as pd
 from tqdm import tqdm
-import wandb
 from datetime import datetime
 import os
 import logging
@@ -432,9 +431,6 @@ class MultiChoiceEvaluation:
                     csvfile.flush()  # 确保立即写入磁盘
                     
                     
-                    if 'wandb_data' in result:
-                        wandb.log(result['wandb_data'])
-                        
                 except queue.Empty:
                     
                     continue
@@ -516,11 +512,7 @@ class MultiChoiceEvaluation:
                         # }
                         # all_tokens += total_tokens
                         # result_queue.put({
-                        #     'record': record,
-                        #     'wandb_data': {
-                        #         "accuracy": correct_count/total_count, 
-                        #         "all_tokens": all_tokens,
-                        #         "num_options": self.num_options
+                        #     'record': record
                         #     }
                         # })
                         # pbar.update(1)
@@ -584,12 +576,7 @@ class MultiChoiceEvaluation:
                 
                 
                 result_queue.put({
-                    'record': record,
-                    'wandb_data': {
-                        "accuracy": correct_count/total_count, 
-                        "all_tokens": all_tokens + total_tokens,
-                        "num_options": self.num_options
-                    }
+                    'record': record
                 })
                 
                 all_tokens += total_tokens
@@ -616,12 +603,7 @@ class MultiChoiceEvaluation:
             
             
             result_queue.put({
-                'record': record,
-                'wandb_data': {
-                    "accuracy": correct_count/total_count, 
-                    "all_tokens": all_tokens + total_tokens,
-                    "num_options": self.num_options
-                }
+                'record': record
             })
             
             all_tokens += total_tokens
@@ -848,8 +830,6 @@ class MultiChoiceEvaluation:
                         csvfile.flush()  # Ensure immediate disk write
                 
                 
-                if 'wandb_data' in result:
-                    wandb.log(result['wandb_data'])
                     
             except queue.Empty:
                 
@@ -859,7 +839,7 @@ class MultiChoiceEvaluation:
                 print(f"Error details: {str(e)}")  # Add more detailed error information
 
 
-def run_single_model_experiment(model_config, data, num_options, config, wandb_key):
+def run_single_model_experiment(model_config, data, num_options, config):
     """
     运行单个模型的实验
     """
@@ -870,12 +850,6 @@ def run_single_model_experiment(model_config, data, num_options, config, wandb_k
         
         loader = ConfigLoader()
         prompt_template = loader.load_config(model_config['prompt_template'])
-        
-        
-        wandb.login(key=wandb_key)
-        run_name = f"Understanding_{model_config['name'].replace('/', '_')}_{config['data']['type']}_{config['data']['data_path'].replace('/', '_')}"
-        wandb.init(project="CNS_cover", name=run_name)
-        wandb.log({"model": model_config['name']})
         
         
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -913,20 +887,14 @@ def run_single_model_experiment(model_config, data, num_options, config, wandb_k
         )
         
         
-        wandb.finish()
-        
         print(f"Model {model_config['name']} experiment completed, results saved to {output_path}")
         return True
         
     except Exception as e:
         print(f"Model {model_config['name']} experiment failed: {str(e)}")
-        try:
-            wandb.finish()
-        except:
-            pass
         return False
 
-def run_models_in_batch(models_batch, data, num_options, config, wandb_key):
+def run_models_in_batch(models_batch, data, num_options, config):
     """
     Run a batch of models
     """
@@ -937,7 +905,7 @@ def run_models_in_batch(models_batch, data, num_options, config, wandb_key):
     pool = multiprocessing.Pool(processes=min(len(models_batch), 10))
     
     
-    args_list = [(model, data, num_options, config, wandb_key) for model in models_batch]
+    args_list = [(model, data, num_options, config) for model in models_batch]
     
     
     results = pool.starmap(run_single_model_experiment, args_list)
@@ -970,8 +938,6 @@ if __name__ == "__main__":
     )
     
     
-    wandb_key = "75c71a00697e97575abad4cafddb5cfc37de3305"
-    
     
     batch_size = args.batch_size
     total_models = len(models)
@@ -987,7 +953,7 @@ if __name__ == "__main__":
         current_batch = models[start_idx:end_idx]
         
         print(f"\nStart running batch {i+1}/{num_batches} ({len(current_batch)} models)")
-        batch_success = run_models_in_batch(current_batch, data, num_options, config, wandb_key)
+        batch_success = run_models_in_batch(current_batch, data, num_options, config)
         total_success += batch_success
         
         print(f"Batch {i+1}/{num_batches} completed! Success: {batch_success}/{len(current_batch)}")
