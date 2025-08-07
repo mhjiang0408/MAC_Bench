@@ -22,11 +22,12 @@
 ```bash
 git clone https://github.com/mhjiang0408/MAC_Bench.git
 cd MAC_Bench
+chmod +x setup.sh
 ./setup.sh
 ```
 
 The setup script automatically:
-- ✅ Creates conda environment from `environment.yml`
+- ✅ Creates environment from `environment.yml`
 - ✅ Installs CLI dependencies  
 - ✅ Downloads dataset from Hugging Face
 - ✅ Sets up and verifies CLI tools
