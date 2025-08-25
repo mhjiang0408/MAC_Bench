@@ -205,7 +205,7 @@ mac status --check-apis --config config.yaml
 
 ## 📚 Dataset Information
 
-The MAC_Bench dataset is available on [🤗 Hugging Face](https://huggingface.co/datasets/mac-bench/MAC-Bench) and contains:
+The MAC_Bench dataset is available on [🤗 Hugging Face](https://huggingface.co/datasets/mhjiang0408/MAC_Bench) and contains:
 - **Source Journals**: Nature, Science, Cell, ACS Central Science
 - **Cover Images**: High-resolution scientific journal covers  
 - **Cover Stories**: Corresponding textual descriptions
