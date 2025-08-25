@@ -1,6 +1,6 @@
 # MAC_Bench
 
-[![arXiv](https://img.shields.io/badge/arXiv-2501.01234-b31b1b.svg)](https://arxiv.org/abs/2501.XXXXX)
+[![arXiv](https://img.shields.io/badge/arXiv-2508.15802-b31b1b.svg)](https://arxiv.org/abs/2508.15802)
 [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-blue)](https://huggingface.co/datasets/mhjiang0408/MAC_Bench)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -9,10 +9,8 @@
 ## 🌟 Features
 
 - **Two Task Types**: Image-to-Text and Text-to-Image understanding
-- **Advanced Methods**: CoVR (Cover Vision Reasoning) methodology with multiple variants
-- **Multiple Models**: Support for GPT-4O, Qwen-VL, Step-1V, Gemini, and more
-- **Easy CLI**: Simple `mac run` and `mac analyze` commands
-- **Comprehensive Analysis**: Automatic report generation with visualizations
+- **Advanced Methods**: DAD (Description and Deduction) methodology with multiple variants
+- **Multiple Models**: Support for GPT-4o, Qwen2.5-VL, Step-1V, Gemini, and more
 - **Scientific Focus**: Real scientific journal covers from Nature, Science, Cell, etc.
 
 ## 🚀 Quick Start
@@ -263,17 +261,13 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 If you use MAC_Bench in your research, please cite our paper:
 
 ```bibtex
-@article{mac_bench_2025,
-  title={MAC: A Live Benchmark for Multimodal Large Language Models in Scientific Understanding},
-  author={},
-  journal={arXiv preprint arXiv:2501.XXXXX},
-  year={2025},
-  url={https://arxiv.org/abs/2501.XXXXX}
+@misc{jiang2025maclivebenchmarkmultimodal,
+      title={MAC: A Live Benchmark for Multimodal Large Language Models in Scientific Understanding}, 
+      author={Mohan Jiang and Jin Gao and Jiahao Zhan and Dequan Wang},
+      year={2025},
+      eprint={2508.15802},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2508.15802}, 
 }
 ```
-
-## 🆘 Support
-
-- **Issues**: Report bugs via GitHub Issues
-- **Discussions**: Join community discussions for help
-

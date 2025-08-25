@@ -184,14 +184,13 @@ with open('temp_requirements.txt', 'w') as f:
     print_success "Dependencies installed"
 }
 
-# Download dataset from Hugging Face
+# Download dataset from Hugging Face with resume support
 download_dataset() {
     print_status "Checking for existing dataset..."
     
-    # Check if dataset already exists
-    if [ -d "MAC_Bench" ] || [ -d "MAC_Bench_data" ] || [ -f "dataset_downloaded.flag" ]; then
-        print_warning "Dataset appears to already exist"
-        print_status "Found existing dataset files/directories"
+    # Check if dataset already exists and is complete
+    if [ -f "dataset_downloaded.flag" ] && [ -d "MAC_Bench" ]; then
+        print_success "Dataset appears to be already downloaded and complete"
         read -p "Do you want to re-download the dataset? [y/N]: " -n 1 -r
         echo
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -199,9 +198,22 @@ download_dataset() {
             return 0
         fi
         print_status "Proceeding with dataset download..."
+        # Remove the completion flag to allow fresh download
+        rm -f dataset_downloaded.flag
+    elif [ -d "MAC_Bench" ] || [ -d "MAC_Bench_data" ]; then
+        print_warning "Dataset directory exists but completion flag missing"
+        print_status "This might indicate a partial or interrupted download"
+        read -p "Do you want to resume/retry the download? [Y/n]: " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Nn]$ ]]; then
+            print_status "Skipping dataset download"
+            return 0
+        fi
+        print_status "Proceeding with dataset download (resume supported)..."
     fi
     
     print_status "Downloading dataset from Hugging Face..."
+    print_status "💡 This download supports resume - you can safely interrupt and restart if needed"
     
     if [ "$PACKAGE_MANAGER" = "uv" ]; then
         # Activate uv environment
@@ -212,17 +224,32 @@ download_dataset() {
         conda activate MAC_Bench
     fi
     
-    # Run Python download script
+    # Run Python download script with better error handling
     print_status "Running dataset download script..."
-    python download_dataset.py
     
-    if [ $? -eq 0 ]; then
+    # Set up trap to handle interruption gracefully
+    trap 'print_warning "Download interrupted - you can resume by running this script again"; exit 130' INT
+    
+    python download_dataset.py
+    download_exit_code=$?
+    
+    # Remove the trap
+    trap - INT
+    
+    if [ $download_exit_code -eq 0 ]; then
         print_success "Dataset download completed"
         # Create a flag file to indicate successful download
         touch dataset_downloaded.flag
+    elif [ $download_exit_code -eq 130 ]; then
+        print_warning "Download was interrupted by user"
+        print_status "You can resume the download by running this script again"
+        return 130
     else
         print_error "Dataset download failed"
-        print_status "Please check your internet connection and Hugging Face Hub access"
+        print_status "Possible solutions:"
+        print_status "  1. Check your internet connection"
+        print_status "  2. Try running the script again (download will resume)"
+        print_status "  3. Check Hugging Face Hub access"
         return 1
     fi
 }
@@ -377,13 +404,34 @@ main() {
     check_package_manager
     setup_environment
     install_cli_dependencies
+    
+    # Handle download with resume support
     download_dataset
+    download_result=$?
+    if [ $download_result -eq 130 ]; then
+        print_warning "Setup interrupted during dataset download"
+        print_status "You can resume by running this script again"
+        exit 130
+    elif [ $download_result -ne 0 ]; then
+        print_error "Dataset download failed, but continuing with CLI setup"
+        print_status "You can try downloading the dataset later by running:"
+        print_status "  python download_dataset.py"
+    fi
+    
     setup_cli
     verify_installation
     
     print_header
     print_success "🎉 MAC_Bench installation completed!"
     print_status ""
+    
+    # Check if dataset download was successful
+    if [ ! -f "dataset_downloaded.flag" ]; then
+        print_warning "Note: Dataset download may be incomplete"
+        print_status "To download/resume dataset: python download_dataset.py"
+        print_status ""
+    fi
+    
     print_status "Next steps:"
     if [ "$PACKAGE_MANAGER" = "uv" ]; then
         print_status "1. Activate environment: source .venv/bin/activate"
@@ -402,6 +450,7 @@ main() {
         print_status "4. Run experiment: ./mac run --config config.yaml"
     fi
     print_status ""
+    print_status "💡 Dataset downloads support resume - safe to interrupt and restart"
     print_status "📖 For detailed usage instructions, see README.md"
 }
 

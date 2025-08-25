@@ -3,6 +3,7 @@
 MAC_Bench Dataset Download Script
 
 Downloads the MAC_Bench dataset from Hugging Face Hub to the local directory.
+Supports resume functionality for interrupted downloads.
 """
 
 import os
@@ -10,34 +11,73 @@ import sys
 from pathlib import Path
 from huggingface_hub import snapshot_download
 
+def check_partial_download(target_dir):
+    """Check if there's a partial download that can be resumed"""
+    if not os.path.exists(target_dir):
+        return False, 0
+    
+    # Check for .incomplete files or other indicators of partial download
+    incomplete_files = []
+    total_files = 0
+    
+    for root, dirs, files in os.walk(target_dir):
+        for file in files:
+            total_files += 1
+            if file.endswith('.incomplete') or file.startswith('.tmp'):
+                incomplete_files.append(os.path.join(root, file))
+    
+    if incomplete_files:
+        return True, total_files
+    
+    # Also check if directory exists but seems incomplete (very small or empty)
+    if total_files < 5:  # Assume dataset should have at least 5 files
+        return True, total_files
+        
+    return False, total_files
+
 def download_dataset():
-    """Download MAC_Bench dataset from Hugging Face"""
+    """Download MAC_Bench dataset from Hugging Face with resume support"""
     
     print("🔄 Starting dataset download...")
     print("📡 Source: https://huggingface.co/datasets/mhjiang0408/MAC_Bench")
     
     target_dir = "./MAC_Bench"
     
-    # Check if dataset already exists
-    if os.path.exists(target_dir):
-        print(f"⚠️  Dataset directory '{target_dir}' already exists")
+    # Check for existing dataset or partial download
+    is_partial, file_count = check_partial_download(target_dir)
+    
+    if os.path.exists(target_dir) and not is_partial:
+        print(f"✅ Dataset directory '{target_dir}' already exists and appears complete")
         response = input("Do you want to re-download? [y/N]: ")
         if response.lower() != 'y':
             print("✅ Skipping dataset download")
             return True
         
-        # Remove existing directory
+        # Remove existing directory for fresh download
         import shutil
         shutil.rmtree(target_dir)
         print("🗑️  Removed existing dataset directory")
+    elif is_partial:
+        print(f"⚠️  Found partial download in '{target_dir}' ({file_count} files)")
+        response = input("Do you want to resume the download? [Y/n]: ")
+        if response.lower() in ['', 'y', 'yes']:
+            print("🔄 Resuming download from where it left off...")
+        else:
+            # Remove existing directory for fresh download
+            import shutil
+            shutil.rmtree(target_dir)
+            print("🗑️  Removed partial download, starting fresh")
     
     try:
         print("📥 Downloading dataset... (this may take several minutes)")
+        print("💡 Download supports resume - you can safely interrupt and restart if needed")
+        
         snapshot_download(
             repo_id="mhjiang0408/MAC_Bench",
             repo_type="dataset", 
             local_dir=target_dir,
-            local_dir_use_symlinks=False
+            local_dir_use_symlinks=False,
+            resume_download=True  # Enable resume functionality
         )
         
         # Check download success
